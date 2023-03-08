@@ -1,31 +1,32 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import IUser from "../types/IUser.js";
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema<IUser>({
   name: {
     type: String,
-    required: [true, 'Please provide name'],
+    required: [true, "Please provide name"],
     min: 3,
     max: 50,
   },
   email: {
     type: String,
-    required: [true, 'Please provide email'],
+    required: [true, "Please provide email"],
     match: [
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      'Please provide valid email',
+      "Please provide valid email",
     ],
     unique: true,
   },
   password: {
     type: String,
-    required: [true, 'Please provide password'],
+    required: [true, "Please provide password"],
     min: 6,
   },
 });
 
-UserSchema.pre('save', async function () {
+UserSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, 10);
 });
 
@@ -42,4 +43,6 @@ UserSchema.methods.checkPassword = async function (candidatePassword) {
   return isMatch;
 };
 
-module.exports = mongoose.model('User', UserSchema);
+const User = mongoose.model("User", UserSchema);
+
+export default User;

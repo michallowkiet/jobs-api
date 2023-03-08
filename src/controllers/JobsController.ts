@@ -1,13 +1,15 @@
-const Job = require('../models/Job');
-const { StatusCodes } = require('http-status-codes');
-const { BadRequestError, NotFoundError } = require('../errors');
+import Job from "../models/Job.js";
+import { StatusCodes } from "http-status-codes";
+import { NotFoundError, BadRequestError } from "../errors/index.js";
+import ICustomRequest from "../types/ICustomRequest.js";
+import { Response } from "express";
 
-const getAllJobs = async (req, res) => {
-  const jobs = await Job.find({ createdBy: req.user.userId }).sort('createdAt');
+const getAllJobs = async (req: ICustomRequest, res: Response) => {
+  const jobs = await Job.find({ createdBy: req.user.userId }).sort("createdAt");
   res.status(StatusCodes.OK).json({ jobs, count: jobs.length });
 };
 
-const getJob = async (req, res) => {
+const getJob = async (req: ICustomRequest, res: Response) => {
   const {
     user: { userId },
     params: { id: jobId },
@@ -22,21 +24,21 @@ const getJob = async (req, res) => {
   res.status(StatusCodes.OK).json({ job });
 };
 
-const createJob = async (req, res) => {
+const createJob = async (req: ICustomRequest, res: Response) => {
   req.body.createdBy = req.user.userId;
   const job = await Job.create(req.body);
   res.status(StatusCodes.CREATED).json(job);
 };
 
-const updateJob = async (req, res) => {
+const updateJob = async (req: ICustomRequest, res: Response) => {
   const {
     user: { userId },
     params: { id: jobId },
     body: { company, position },
   } = req;
 
-  if (!company === '' || position === '') {
-    throw new BadRequestError('Company or Position fields cannot by empty');
+  if (company === "" || position === "") {
+    throw new BadRequestError("Company or Position fields cannot by empty");
   }
 
   const job = await Job.findByIdAndUpdate(
@@ -52,7 +54,7 @@ const updateJob = async (req, res) => {
   res.status(StatusCodes.OK).json({ job });
 };
 
-const deleteJob = async (req, res) => {
+const deleteJob = async (req: ICustomRequest, res: Response) => {
   const {
     user: { userId },
     params: { id: jobId },
@@ -67,4 +69,4 @@ const deleteJob = async (req, res) => {
   res.status(StatusCodes.OK).send();
 };
 
-module.exports = { getAllJobs, getJob, createJob, updateJob, deleteJob };
+export { getAllJobs, getJob, createJob, updateJob, deleteJob };

@@ -1,23 +1,24 @@
 {
-  "name": "jobs-api",
+  "name": "job-tracker-api",
   "version": "1.0.0",
-  "description": "Api for application with jobs offerts.",
-  "main": "app.js",
+  "description": "",
+  "type": "module",
+  "main": "app.ts",
   "scripts": {
-    "start": "nodemon app.js"
+    "build": "tsc",
+    "dev": "nodemon --watch '*.ts' --watch '*.json' --exec 'ts-node --esm' ./src/app.ts"
   },
-  "author": "Michał Łowkiet",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michallowkiet/jobs-api.git"
+  },
+  "keywords": [],
+  "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "eslint": "^8.35.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^15.6.1",
-    "eslint-plugin-promise": "^6.1.1",
-    "eslint-prettier": "^0.0.0-empty",
-    "nodemon": "^2.0.20",
-    "prettier": "^2.8.4"
+  "bugs": {
+    "url": "https://github.com/michallowkiet/jobs-api/issues"
   },
+  "homepage": "https://github.com/michallowkiet/jobs-api#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
@@ -29,11 +30,24 @@
     "http-status-codes": "^2.2.0",
     "joi": "^17.8.3",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^6.10.0",
-    "rate-limiter": "^0.2.0",
+    "mongoose": "^7.0.1",
     "swagger-ui-express": "^4.6.2",
     "xss-clean": "^0.1.1",
-    "yaml": "^2.2.1",
-    "yamljs": "^0.3.0"
+    "yaml": "^2.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.1",
+    "@types/morgan": "^1.9.4",
+    "@types/node": "^18.14.6",
+    "@typescript-eslint/eslint-plugin": "^5.54.1",
+    "@typescript-eslint/parser": "^5.54.1",
+    "eslint": "^8.35.0",
+    "eslint-config-prettier": "^8.7.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "nodemon": "^2.0.21",
+    "prettier": "^2.8.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
   }
 }
