@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import IJob from "../types/IJob.js";
+import IJob, { JobStatusType, JobType } from "../types/IJob.js";
 
 const JobSchema = new mongoose.Schema<IJob>(
   {
@@ -15,13 +15,23 @@ const JobSchema = new mongoose.Schema<IJob>(
     },
     status: {
       type: String,
-      enum: ["interview", "declined", "pending"],
-      default: "pending",
+      enum: JobStatusType,
+      default: JobStatusType.PENDING,
     },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: [true, "Please provide user"],
+    },
+    jobType: {
+      type: String,
+      enum: JobType,
+      default: JobType.FULL_TIME,
+    },
+    jobLocation: {
+      type: String,
+      default: "",
+      required: [true, "Please provide job location."],
     },
   },
   { timestamps: true }

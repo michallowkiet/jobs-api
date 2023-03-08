@@ -21,7 +21,7 @@ const getJob = async (req: ICustomRequestJobs, res: Response) => {
     throw new NotFoundError(`No job with id ${jobId}`);
   }
 
-  res.status(StatusCodes.OK).json({ job });
+  res.status(StatusCodes.OK).json(job);
 };
 
 const createJob = async (req: ICustomRequestJobs, res: Response) => {
