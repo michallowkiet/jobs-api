@@ -2,7 +2,7 @@ import Job from "../models/Job.js";
 import { StatusCodes } from "http-status-codes";
 import { NotFoundError, BadRequestError } from "../errors/index.js";
 import ICustomRequest from "../types/ICustomRequest.js";
-import { Response } from "express";
+import { Request, Response } from "express";
 
 const getAllJobs = async (req: ICustomRequest, res: Response) => {
   const jobs = await Job.find({ createdBy: req.user.userId }).sort("createdAt");
@@ -69,4 +69,8 @@ const deleteJob = async (req: ICustomRequest, res: Response) => {
   res.status(StatusCodes.OK).send();
 };
 
-export { getAllJobs, getJob, createJob, updateJob, deleteJob };
+const jobsStats = async (req: Request, res: Response) => {
+  res.status(StatusCodes.OK).json({ stats: {} });
+};
+
+export { getAllJobs, getJob, createJob, updateJob, deleteJob, jobsStats };

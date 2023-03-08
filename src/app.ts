@@ -10,7 +10,7 @@ import yaml from "yaml";
 
 import fs from "fs";
 import swaggerUi from "swagger-ui-express";
-import express from "express";
+import express, { Request, Response } from "express";
 
 import connectDB from "./db/ConnectDb.js";
 import Authentication from "./middleware/Authentication.js";
@@ -21,9 +21,16 @@ import JobsRouter from "./routes/JobsRouter.js";
 import NotFoundHandler from "./middleware/NotFoundHandler.js";
 import ErrorHandler from "./middleware/ErrorHandler.js";
 
+import path from "path";
+import { fileURLToPath } from "url";
+
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
+
+app.use(express.static(path.resolve(__dirname, "../client/build")));
 
 app.set("trust proxy", 1);
 app.use(
@@ -43,6 +50,10 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 app.use("/api/v1/auth", AuthRouter);
 app.use("/api/v1/jobs", Authentication, JobsRouter);
+
+app.get("*", (req: Request, res: Response) => {
+  res.send(path.resolve(__dirname, "../client/build", "index.html"));
+});
 
 app.use(NotFoundHandler);
 app.use(ErrorHandler);

@@ -2,8 +2,10 @@ import { Model } from "mongoose";
 
 interface IUser {
   name: string;
+  lastName: string;
   email: string;
   password: string;
+  location: string;
 }
 
 export interface IUserMethods {
