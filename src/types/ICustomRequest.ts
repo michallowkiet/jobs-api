@@ -9,7 +9,9 @@ interface ICustomRequest extends Request {
   params: {
     id: string;
   };
+}
 
+interface ICustomRequestJobs extends ICustomRequest {
   body: {
     company: string;
     position: string;
@@ -17,4 +19,13 @@ interface ICustomRequest extends Request {
   };
 }
 
-export default ICustomRequest;
+interface ICustomRequestUsers extends ICustomRequest {
+  body: {
+    name: string;
+    lastName: string;
+    location: string;
+    email: string;
+  };
+}
+
+export { ICustomRequest, ICustomRequestJobs, ICustomRequestUsers };

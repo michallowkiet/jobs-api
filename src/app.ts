@@ -17,6 +17,7 @@ import Authentication from "./middleware/Authentication.js";
 
 import AuthRouter from "./routes/AuthRouter.js";
 import JobsRouter from "./routes/JobsRouter.js";
+import UserRouter from "./routes/UsersRouter.js";
 
 import NotFoundHandler from "./middleware/NotFoundHandler.js";
 import ErrorHandler from "./middleware/ErrorHandler.js";
@@ -50,6 +51,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 app.use("/api/v1/auth", AuthRouter);
 app.use("/api/v1/jobs", Authentication, JobsRouter);
+app.use("/api/v1/users", Authentication, UserRouter);
 
 app.get("*", (req: Request, res: Response) => {
   res.send(path.resolve(__dirname, "../client/build", "index.html"));
