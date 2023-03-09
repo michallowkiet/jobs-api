@@ -151,8 +151,8 @@ const jobsStats = async (req: ICustomRequestJobs, res: Response) => {
     { $limit: 6 },
   ]);
 
-  const monthlyApplications: IJobMonthlyApplication[] = mApplications.map(
-    (application: IJobMonthlyApplicationResponse) => {
+  const monthlyApplications: IJobMonthlyApplication[] = mApplications
+    .map((application: IJobMonthlyApplicationResponse) => {
       const {
         _id: { year, month },
         count,
@@ -164,8 +164,8 @@ const jobsStats = async (req: ICustomRequestJobs, res: Response) => {
         .format('MMM Y');
 
       return { date, count };
-    }
-  );
+    })
+    .reverse();
 
   res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
 };
