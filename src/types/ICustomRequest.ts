@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { JobStatusType, JobType, SortType } from "./IJob.js";
 
 interface ICustomRequest extends Request {
   user: {
@@ -16,6 +17,15 @@ interface ICustomRequestJobs extends ICustomRequest {
     company: string;
     position: string;
     createdBy?: string;
+  };
+
+  query: {
+    search: string;
+    status: JobStatusType;
+    jobType: JobType;
+    sort: SortType;
+    page?: string;
+    limit?: string;
   };
 }
 

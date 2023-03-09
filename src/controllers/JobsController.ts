@@ -3,10 +3,64 @@ import { StatusCodes } from "http-status-codes";
 import { NotFoundError, BadRequestError } from "../errors/index.js";
 import { ICustomRequestJobs } from "../types/ICustomRequest.js";
 import { Request, Response } from "express";
+import {
+  IJobQueryObject,
+  JobStatusType,
+  JobType,
+  SortType,
+} from "../types/IJob.js";
 
 const getAllJobs = async (req: ICustomRequestJobs, res: Response) => {
-  const jobs = await Job.find({ createdBy: req.user.userId }).sort("createdAt");
-  res.status(StatusCodes.OK).json({ jobs, count: jobs.length });
+  const { search, status, jobType, sort } = req.query;
+
+  const queryObject: IJobQueryObject = {
+    createdBy: req.user.userId,
+  };
+
+  if (search) {
+    queryObject.position = { $regex: search, $options: "i" };
+  }
+
+  if (status && status !== JobStatusType.ALL) {
+    queryObject.status = status;
+  }
+
+  if (jobType && jobType !== JobType.ALL) {
+    queryObject.jobType = jobType;
+  }
+
+  let result = Job.find(queryObject);
+
+  // sort
+  if (sort === SortType.LATEST) {
+    result = result.sort("-createdAt");
+  }
+
+  if (sort === SortType.OLDEST) {
+    result = result.sort("createdAt");
+  }
+
+  if (sort === SortType.A_Z) {
+    result = result.sort("position");
+  }
+
+  if (sort === SortType.Z_A) {
+    result = result.sort("-position");
+  }
+
+  // pagination
+  const { page = 1, limit = 10 } = req.query;
+
+  const skip = (+page - 1) * +limit;
+
+  result.limit(+limit).skip(skip);
+
+  const jobs = await result;
+
+  const totalJobs = await Job.countDocuments(queryObject);
+  const numOfPages = Math.ceil(totalJobs / +limit);
+
+  res.status(StatusCodes.OK).json({ jobs, totalJobs, numOfPages });
 };
 
 const getJob = async (req: ICustomRequestJobs, res: Response) => {
