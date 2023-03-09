@@ -2,13 +2,16 @@ import Job from "../models/Job.js";
 import { StatusCodes } from "http-status-codes";
 import { NotFoundError, BadRequestError } from "../errors/index.js";
 import { ICustomRequestJobs } from "../types/ICustomRequest.js";
-import { Request, Response } from "express";
+import { Response } from "express";
 import {
   IJobQueryObject,
   JobStatusType,
   JobType,
   SortType,
 } from "../types/IJob.js";
+import mongoose from "mongoose";
+import moment from "moment";
+import IJobStats, { IJobDefaultAggregate } from "../types/IJobStats.js";
 
 const getAllJobs = async (req: ICustomRequestJobs, res: Response) => {
   const { search, status, jobType, sort } = req.query;
@@ -123,8 +126,22 @@ const deleteJob = async (req: ICustomRequestJobs, res: Response) => {
   res.status(StatusCodes.OK).send();
 };
 
-const jobsStats = async (req: Request, res: Response) => {
-  res.status(StatusCodes.OK).json({ stats: {} });
+const jobsStats = async (req: ICustomRequestJobs, res: Response) => {
+  const stats = await Job.aggregate<IJobDefaultAggregate>([
+    { $match: { createdBy: new mongoose.Types.ObjectId(req.user.userId) } },
+    { $group: { _id: "$status", count: { $sum: 1 } } },
+  ]);
+
+  const defaultStats: IJobStats = stats.reduce(
+    (stats, stat) => {
+      const { _id, count } = stat;
+      stats[_id] = +count;
+      return stats;
+    },
+    { pending: 0, declined: 0, interview: 0 }
+  );
+
+  res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications: [] });
 };
 
 export { getAllJobs, getJob, createJob, updateJob, deleteJob, jobsStats };

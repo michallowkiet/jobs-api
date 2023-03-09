@@ -10,10 +10,10 @@ import {
 } from "../controllers/JobsController.js";
 import TestUserHandler from "../middleware/TestUserHandler.js";
 
-JobsRouter.route("/")
-  .post(TestUserHandler, createJob)
-  .get(getAllJobs)
-  .get(jobsStats);
+JobsRouter.route("/").post(TestUserHandler, createJob).get(getAllJobs);
+
+JobsRouter.route("/stats").get(jobsStats);
+
 JobsRouter.route("/:id")
   .get(getJob)
   .delete(TestUserHandler, deleteJob)
