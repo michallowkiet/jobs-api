@@ -4,7 +4,7 @@ import { JobStatusType, JobType, SortType } from "./IJob.js";
 interface ICustomRequest extends Request {
   user: {
     userId: string;
-    name: string;
+    testUser: boolean;
   };
 
   params: {

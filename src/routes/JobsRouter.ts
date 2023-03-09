@@ -8,8 +8,15 @@ import {
   deleteJob,
   jobsStats,
 } from "../controllers/JobsController.js";
+import TestUserHandler from "../middleware/TestUserHandler.js";
 
-JobsRouter.route("/").post(createJob).get(getAllJobs).get(jobsStats);
-JobsRouter.route("/:id").get(getJob).delete(deleteJob).patch(updateJob);
+JobsRouter.route("/")
+  .post(TestUserHandler, createJob)
+  .get(getAllJobs)
+  .get(jobsStats);
+JobsRouter.route("/:id")
+  .get(getJob)
+  .delete(TestUserHandler, deleteJob)
+  .patch(TestUserHandler, updateJob);
 
 export default JobsRouter;

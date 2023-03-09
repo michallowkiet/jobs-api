@@ -24,6 +24,7 @@ import ErrorHandler from "./middleware/ErrorHandler.js";
 
 import path from "path";
 import { fileURLToPath } from "url";
+import TestUserHandler from "./middleware/TestUserHandler.js";
 
 dotenv.config();
 const app = express();
@@ -34,12 +35,14 @@ const __dirname = fileURLToPath(new URL(".", import.meta.url));
 app.use(express.static(path.resolve(__dirname, "../client/build")));
 
 app.set("trust proxy", 1);
-app.use(
-  rateLimiter({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 request per windowMs
-  })
-);
+const apiLimiter = rateLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 request per windowMs
+  message: {
+    msg: "Too many requests from this IP, please try again after 15 minutes.",
+  },
+});
+
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
@@ -49,9 +52,9 @@ const swaggerFile = fs.readFileSync("./swaggerDoc.yaml", "utf-8");
 const swaggerDoc = yaml.parse(swaggerFile);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
-app.use("/api/v1/auth", AuthRouter);
+app.use("/api/v1/auth", apiLimiter, AuthRouter);
 app.use("/api/v1/jobs", Authentication, JobsRouter);
-app.use("/api/v1/users", Authentication, UserRouter);
+app.use("/api/v1/users", Authentication, TestUserHandler, UserRouter);
 
 app.get("*", (req: Request, res: Response) => {
   res.send(path.resolve(__dirname, "../client/build", "index.html"));
